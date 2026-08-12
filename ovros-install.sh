@@ -50,7 +50,7 @@ cat > 'CmdCntr/default.nix' << 'FILE_EOF_fe41fd88ca'
 
   home.username = username;
   home.homeDirectory = "/home/${username}";
-  home.stateVersion = "24.11";
+  home.stateVersion = "26.05";
 
   programs.home-manager.enable = true;
 }
@@ -118,8 +118,8 @@ cat > 'CmdCntr/modules/git.nix' << 'FILE_EOF_f45faa122c'
   # identity to commits until this is set.
   programs.git = {
     enable = true;
-    userName = ""; # <-- fill in
-    userEmail = ""; # <-- fill in
+    userName = "oversoulos"; 
+    userEmail = "sooversoulo@gmail.com"; 
     extraConfig = {
       init.defaultBranch = "main";
       pull.rebase = true;
