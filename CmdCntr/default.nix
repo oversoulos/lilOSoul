@@ -13,7 +13,7 @@
     ./modules/ai-tools.nix
     ./modules/packages
     ./modules/hyprland
-    ./theme.nix
+    ./modules/theming
   ];
 
   home.username = username;

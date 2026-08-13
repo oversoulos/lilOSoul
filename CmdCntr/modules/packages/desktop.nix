@@ -20,15 +20,6 @@
     wlogout
     radeontop
     vulkan-tools
-    qt5ct
-    qt6ct
-    libsForQt5.qtstyleplugin-kvantum
-    papirus-icon-theme
-    tela-icon-theme
-    whitesur-icon-theme
-    qogir-icon-theme
-    bibata-cursors
-    numix-cursor-theme
   ];
 }
 
