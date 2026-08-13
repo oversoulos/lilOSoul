@@ -11,23 +11,26 @@
   users.users.${username} = {
     isNormalUser = true;
     description = username;
-    # Single-user machine, no login manager beyond this. Password is set in
-    # plain text here (`initialPassword`) which NixOS hashes into place on
-    # first build — simplest option for a single-user box. Known tradeoff:
-    # this file is readable in the repo, including while public during
-    # install (see README). Change any time with `passwd` once booted, or
-    # switch this to `hashedPassword` later if wanted.
     initialPassword = "4713";
     extraGroups = [
-      "wheel"          # sudo
-      "networkmanager" # network control
-      "video"          # GPU/display access
-      "audio"          # sound devices
-      "podman"         # rootless containers
-      "corectrl"       # lets CoreCtrl adjust GPU without a password prompt each time
-      "input"          # needed by dictation tools (nerd-dictation/ydotool) to inject keystrokes
+      "wheel"
+      "networkmanager"
+      "video"
+      "audio"
+      "podman"
+      "corectrl"
+      "input"
     ];
     shell = pkgs.zsh;
+  };
+
+  # Enable KDE Connect
+  programs.kdeconnect.enable = true;
+
+  # Firewall rules for KDE Connect
+  networking.firewall = {
+    allowedTCPPortRanges = [ { from = 1714; to = 1764; } ];
+    allowedUDPPortRanges = [ { from = 1714; to = 1764; } ];
   };
 
   # zsh is set as the user's shell above, so it must be enabled system-wide too

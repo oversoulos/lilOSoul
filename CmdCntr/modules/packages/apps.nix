@@ -9,5 +9,6 @@
     xfce.thunar
     git-cola
     okular
+    vscodium
   ];
 }
