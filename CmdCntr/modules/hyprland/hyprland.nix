@@ -67,6 +67,9 @@
     hl.bind({ "SUPER", "SHIFT" }, "S", function()
       hl.dsp.exec("grim -g \"$(slurp)\" - | swappy -f -")
     end)
+    hl.bind({ "SUPER" }, "space", function()
+      hl.dsp.exec("nerd-dictation begin --simulate-input-tool=WTYPE || nerd-dictation end")
+    end)
 
     -- Scratchpad toggles for the system/GPU monitors
     hl.bind({ "SUPER" }, "D", function()
@@ -81,19 +84,3 @@
     NIXOS_OZONE_WL = "1"; # Electron apps (Vesktop, OBS, etc.) use Wayland
   };
 }
-
-Done
-Update CmdCntr/modules/hyprland/default.nix (just the imports list):
-
-Ran a command
-
-Ran a command
-What actually changed and why, straight:
-Went with writing the real hyprland.lua file directly instead of the "let Nix generate it for me" option — that auto-feature has a known, currently-unfixed bug, so building on it would've meant handing you something already shaky.
-All your existing keybinds carried over as-is, including SUPER+M staying "exit" like before — nothing quietly changed.
-One real limit to know about: since Hyprland's Lua config is only 3 months old, its own documentation is still incomplete — I confirmed the core pattern from the official wiki, but a few of the individual function names (hl.dsp.killactive, hl.dsp.fullscreen, etc.) are my best inference from the old naming, not individually confirmed. That's exactly why the file has a comment at the top telling you to run hyprland --verify-config first — if something errors, it's almost always just one function name needing a tweak, not the whole approach being wrong.
-Once you're on the machine and can run --verify-config, bring back whatever error it gives you (if any) and I'll fix that specific line — small correction, not a redo.
-
-
-Want to be notified when Claude responds?
-
