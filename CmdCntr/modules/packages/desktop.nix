@@ -13,5 +13,6 @@
     pavucontrol
     nwg-look
     wdisplays
+    swww
   ];
 }

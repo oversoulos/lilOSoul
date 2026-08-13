@@ -46,6 +46,7 @@
     hl.exec_once("nm-applet --indicator")
     hl.exec_once("blueman-applet")
     hl.exec_once("${pkgs.hyprpolkitagent}/bin/hyprpolkitagent")
+    hl.exec_once("swww-daemon")
 
     -- Mission Center + CoreCtrl: launched hidden in their own special
     -- workspace at startup, toggled into view with a hotkey (scratchpad
