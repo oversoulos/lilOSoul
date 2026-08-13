@@ -8,5 +8,6 @@
     fzf
     tree
     p7zip
+    lazygit
   ];
 }
