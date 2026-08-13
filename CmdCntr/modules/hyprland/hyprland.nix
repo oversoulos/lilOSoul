@@ -1,14 +1,19 @@
 { pkgs, ... }:
 {
-
   wayland.windowManager.hyprland = {
-    enable = true;
+    enable = true; # still needed — this installs Hyprland + adds it to PATH
   };
 
   xdg.configFile."hypr/hyprland.lua".text = ''
     -- OvrOS Hyprland config (native Lua, Hyprland 0.55+)
-    
+
+    -- Monitor: auto-detect, best available resolution, auto position,
+    -- 100% scale. This was in the original .conf-style config but got
+    -- dropped in the Lua rewrite — added back here. Same honesty flag as
+    -- the rest of this file: syntax pattern is best-inference, verify
+    -- with `hyprland --verify-config`.
     hl.monitor("", "preferred", "auto", 1)
+
     hl.config({
       general = {
         gaps_in = 4,
@@ -38,6 +43,10 @@
     --   swww img /path/to/your/image.png
     hl.exec_once("swww-daemon")
 
+    -- Clipboard history listener — runs quietly in the background,
+    -- SUPER+Y opens the searchable history (bound below)
+    hl.exec_once("wl-paste --watch cliphist store")
+
     -- Mission Center + CoreCtrl: launched hidden in their own special
     -- workspace at startup, toggled into view with a hotkey (scratchpad
     -- style — nothing sits on Waybar or your open-window list).
@@ -55,6 +64,16 @@
     hl.bind({ "SUPER" }, "M", function() hl.dsp.exit() end)
     hl.bind({ "SUPER" }, "V", function() hl.dsp.togglefloating() end)
     hl.bind({ "SUPER" }, "F", function() hl.dsp.fullscreen() end)
+
+    -- Clipboard history picker
+    hl.bind({ "SUPER" }, "y", function()
+      hl.dsp.exec("cliphist list | wofi --dmenu | cliphist decode | wl-copy")
+    end)
+
+    -- Power/session menu (logout, restart, shutdown) without a terminal
+    hl.bind({ "SUPER" }, "escape", function()
+      hl.dsp.exec("wlogout")
+    end)
     hl.bind({ "SUPER", "SHIFT" }, "S", function()
       hl.dsp.exec("grim -g \"$(slurp)\" - | swappy -f -")
     end)

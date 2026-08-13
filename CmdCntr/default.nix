@@ -9,6 +9,8 @@
     ./modules/yazi.nix
     ./modules/podman.nix
     ./modules/dictation.nix
+    ./modules/lockscreen.nix
+    ./modules/ai-tools.nix
     ./modules/packages
     ./modules/hyprland
     ./theme.nix
