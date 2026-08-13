@@ -9,5 +9,6 @@
     ./packages.nix
     ./gpu.nix
     ./bluetooth.nix
+    ./zram.nix
   ];
 }

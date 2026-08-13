@@ -7,7 +7,8 @@
 
   xdg.configFile."hypr/hyprland.lua".text = ''
     -- OvrOS Hyprland config (native Lua, Hyprland 0.55+)
-
+    
+    hl.monitor("", "preferred", "auto", 1)
     hl.config({
       general = {
         gaps_in = 4,
