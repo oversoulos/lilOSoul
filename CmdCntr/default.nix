@@ -11,6 +11,7 @@
     ./modules/dictation.nix
     ./modules/lockscreen.nix
     ./modules/ai-tools.nix
+    ./modules/vscode.nix
     ./modules/packages
     ./modules/hyprland
     ./modules/theming
