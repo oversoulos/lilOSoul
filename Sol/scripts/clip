@@ -1,0 +1,8 @@
+#!/bin/bash
+# Description: Previews the current text content stored on your Mac clipboard.
+echo "=================================================="
+echo "📋 CURRENT CLIPBOARD CONTENT:"
+echo "=================================================="
+pbpaste
+echo ""
+echo "=================================================="

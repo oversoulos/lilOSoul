@@ -1,0 +1,3 @@
+# security — Notes (AI-assistant observations, not acted on)
+
+This module's actual option path is `molecular.security`, not `atomic.security` or `netSec.security` — despite living in the atomic/netSec folder, its namespace suggests it may have originally been intended as (or copied from) a molecular-tier module. Left as-is since renaming the option would be a bigger structural change than this pass covers, but worth knowing when you go looking for its config later. It also duplicates atomic/sys/tailscale.nix's job for turning Tailscale on -- not a conflict, just two switches that do the same thing.

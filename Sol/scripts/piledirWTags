@@ -1,0 +1,75 @@
+#!/bin/bash
+# Fixed Tag Display
+
+TARGET_DIR=$(pwd)
+OUTPUT="$HOME/Desktop/fulldirWTags.txt"
+
+# Reset
+> "$OUTPUT"
+
+echo "===============================================================================" > "$OUTPUT"
+echo "DIRECTORY INDEX / TREE" >> "$OUTPUT"
+echo "Base Directory: $TARGET_DIR" >> "$OUTPUT"
+echo "===============================================================================" >> "$OUTPUT"
+
+# Tree
+if command -v tree &> /dev/null; then
+    tree -a -I '.git|node_modules|.DS_Store' "$TARGET_DIR" >> "$OUTPUT"
+else
+    cd "$TARGET_DIR" && find . -not -path '*/.git*' -not -path '*node_modules*' -not -name '.DS_Store' >> "$OUTPUT"
+fi
+
+# DIRECTORY TAGS - FIXED
+echo -e "\n===============================================================================" >> "$OUTPUT"
+echo "DIRECTORY TAGS (Finder tags for folders)" >> "$OUTPUT"
+echo "===============================================================================" >> "$OUTPUT"
+
+find "$TARGET_DIR" -type d \
+    -not -path '*/.git/*' \
+    -not -path '*/node_modules/*' \
+    -not -path '*/.DS_Store*' | while read -r dir; do
+
+    if command -v mdls &> /dev/null; then
+        # Get raw tags and clean them properly
+        tags=$(mdls -name kMDItemUserTags "$dir" 2>/dev/null | sed -n 's/.*= //p' | tr -d '()' | sed 's/"//g')
+        if [[ -n "$tags" && "$tags" != "(null)" && "$tags" != " " ]]; then
+            echo "📁 ${dir#$TARGET_DIR/} → $tags" >> "$OUTPUT"
+        fi
+    fi
+done
+
+# FILE CONTENTS - FIXED
+echo -e "\n===============================================================================" >> "$OUTPUT"
+echo "FILE CONTENTS" >> "$OUTPUT"
+echo "===============================================================================" >> "$OUTPUT"
+
+find "$TARGET_DIR" -type f | while read -r file; do
+    # Filters
+    [[ "$file" == *"/.git/"* ]] && continue
+    [[ "$file" == *"/node_modules/"* ]] && continue
+    [[ "$file" == *"/.DS_Store"* ]] && continue
+    [[ "$file" == "$OUTPUT" ]] && continue
+    
+    # Get extension
+    ext="${file##*.}"
+    
+    # ALWAYS include .txt files
+    if [[ "$ext" == "txt" ]] || file "$file" | grep -qE 'text|empty|JSON|XML|YAML|script|source'; then
+        echo -e "\n-------------------------------------------------------------------------------" >> "$OUTPUT"
+        echo "📄 FILE: ${file#$TARGET_DIR/}" >> "$OUTPUT"
+        
+    # Get tags and clean them properly
+    if command -v mdls &> /dev/null; then
+    # Get raw tags and clean them properly
+        tags=$(mdls -name kMDItemUserTags "$file" 2>/dev/null | sed -n 's/.*= //p' | tr -d '()' | sed 's/["]//g' | sed 's/,/ /g' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+    if [[ -n "$tags" && "$tags" != "(null)" && "$tags" != " " ]]; then
+        echo "🏷️ TAGS: $tags" >> "$OUTPUT"
+    fi
+fi
+        
+        echo "-------------------------------------------------------------------------------" >> "$OUTPUT"
+        cat "$file" 2>/dev/null >> "$OUTPUT"
+    fi
+done
+
+echo "🚀 Done! Check ~/Desktop/fulldirWTags.txt"

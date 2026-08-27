@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Ensure we are running from the root of the lilOSoul repository
+if [[ ! -f "flake.nix" ]]; then
+  echo "❌ Error: Please run this script from the root of your lilOSoul repository."
+  exit 1
+fi
+
+echo "🚀 Starting directory reorganization..."
+
+# 1. Flatten hosts/lilOSoul -> OSo
+if [[ -d "hosts/lilOSoul" ]]; then
+  mkdir -p OSo
+  mv hosts/lilOSoul/* OSo/
+  rm -rf hosts
+  echo "  ✔ Flattened hosts/lilOSoul into OSo/"
+fi
+
+# 2. Create new mogis structure
+mkdir -p mogis/cmdCtr/tools
+mkdir -p mogis/cmdCtr/hubs
+mkdir -p mogis/dskscpe/themes
+mkdir -p mogis/templates
+
+# 3. Move modules into mogis/cmdCtr and mogis/dskscpe
+if [[ -d "CmdCntr/modules" ]]; then
+  # Tools
+  [[ -f "CmdCntr/modules/vscode.nix" ]] && mv CmdCntr/modules/vscode.nix mogis/cmdCtr/tools/
+  [[ -f "CmdCntr/modules/ghostty.nix" ]] && mv CmdCntr/modules/ghostty.nix mogis/cmdCtr/tools/
+  [[ -f "CmdCntr/modules/neovim.nix" ]] && mv CmdCntr/modules/neovim.nix mogis/cmdCtr/tools/
+  [[ -f "CmdCntr/modules/yazi.nix" ]] && mv CmdCntr/modules/yazi.nix mogis/cmdCtr/tools/
+  [[ -f "CmdCntr/modules/dictation.nix" ]] && mv CmdCntr/modules/dictation.nix mogis/cmdCtr/tools/
+  [[ -f "CmdCntr/modules/podman.nix" ]] && mv CmdCntr/modules/podman.nix mogis/cmdCtr/tools/
+  [[ -f "CmdCntr/modules/shell.nix" ]] && mv CmdCntr/modules/shell.nix mogis/cmdCtr/tools/
+  [[ -f "CmdCntr/modules/git.nix" ]] && mv CmdCntr/modules/git.nix mogis/cmdCtr/tools/
+  
+  # Packages subfolder -> tools
+  if [[ -d "CmdCntr/modules/packages" ]]; then
+    mv CmdCntr/modules/packages/* mogis/cmdCtr/tools/ 2>/dev/null || true
+    rm -rf CmdCntr/modules/packages
+  fi
+
+  # Hubs
+  [[ -f "CmdCntr/modules/ai-tools.nix" ]] && mv CmdCntr/modules/ai-tools.nix mogis/cmdCtr/hubs/ai-hub.nix
+  [[ -f "CmdCntr/modules/cache-cleanup.nix" ]] && mv CmdCntr/modules/cache-cleanup.nix mogis/cmdCtr/hubs/
+
+  # Aesthetics & Hyprland -> dskscpe
+  [[ -d "CmdCntr/modules/hyprland" ]] && mv CmdCntr/modules/hyprland/* mogis/dskscpe/ && rm -rf CmdCntr/modules/hyprland
+  [[ -f "CmdCntr/modules/lockscreen.nix" ]] && mv CmdCntr/modules/lockscreen.nix mogis/dskscpe/
+  [[ -d "CmdCntr/modules/theming" ]] && mv CmdCntr/modules/theming/* mogis/dskscpe/themes/ && rm -rf CmdCntr/modules/theming
+
+  # Root CmdCntr default.nix
+  [[ -f "CmdCntr/default.nix" ]] && mv CmdCntr/default.nix mogis/cmdCtr/
+  rm -rf CmdCntr
+  echo "  ✔ Reorganized modules into mogis/cmdCtr and mogis/dskscpe"
+fi
+
+# 4. Move System Desktop Modules into dskscpe
+if [[ -d "modules/desktop" ]]; then
+  mkdir -p mogis/dskscpe/system
+  mv modules/desktop/* mogis/dskscpe/system/
+  rm -rf modules/desktop
+fi
+
+if [[ -d "modules/core" ]]; then
+  mkdir -p mogis/core
+  mv modules/core/* mogis/core/
+  rm -rf modules/core
+fi
+
+[[ -d "modules" ]] && rm -rf modules
+
+# 5. Create starter template files in mogis/templates
+cat << 'EOF' > mogis/templates/module-template.nix
+{ pkgs, ... }:
+{
+  # Placeholder Template Module
+  # Add your packages, environment variables, or service settings here
+  home.packages = with pkgs; [
+    # example-package
+  ];
+}
+EOF
+
+cat << 'EOF' > mogis/templates/shell-flake-template.nix
+{
+  description = "Isolated Dev Shell Template";
+
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+  outputs = { self, nixpkgs }:
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      devShells.${system}.default = pkgs.mkShell {
+        buildInputs = with pkgs; [
+          # Add dev tools here (e.g. python3, nodejs, go)
+        ];
+        shellHook = ''
+          echo "🚀 Entered custom template dev shell!"
+        '';
+      };
+    };
+}
+EOF
+
+echo "  ✔ Created module and mini-flake template starters in mogis/templates/"
+echo "✨ Directory reorganization complete!"

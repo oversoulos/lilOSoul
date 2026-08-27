@@ -1,0 +1,3 @@
+# ghostunnel — Notes (AI-assistant observations, not acted on)
+
+This is the fuller of two ghostunnel implementations found in the dump — a simpler single-tunnel version (ghost-tunnel.nix) was scrapped per your call in favor of this multi-server one, since it exposes more of what's actually configurable. Every server you define needs at least one access-control option set (allowAll, allowCN, etc.) or NixOS will refuse to build — module.nix's example includes allowAll = true as a placeholder specifically so it evaluates out of the box; swap that for a real access-control rule before actually exposing anything.

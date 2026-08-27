@@ -1,0 +1,25 @@
+#!/bin/bash
+# Description: Appends text directly from your copied clipboard to the bottom of a file.
+
+TARGET_FILE="$1"
+
+if [ -z "$TARGET_FILE" ]; then
+    echo "❌ Error: Please specify a file path. Example: eofovrWrt ~/.zshrc"
+    exit 1
+fi
+
+if [ ! -f "$TARGET_FILE" ]; then
+    echo "❌ Error: File does not exist at '$TARGET_FILE'. Use eofmkNew to create a new file."
+    exit 1
+fi
+
+echo "📋 Processing... Appending your clipboard text to the bottom of the file."
+
+# Safe Engine: Append clipboard text with a clean trailing line break
+echo "" >> "$TARGET_FILE"
+pbpaste >> "$TARGET_FILE"
+
+# Refresh the terminal environment automatically
+source ~/.zshrc
+
+echo "🚀 Success! Text safely added to the bottom of: $TARGET_FILE"

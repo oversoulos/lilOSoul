@@ -1,0 +1,3 @@
+# nerd-dictation — Notes (AI-assistant observations, not acted on)
+
+The default keybind here is Alt+Shift+V, but your own notes describe SUPER+Space as the intended dictation trigger — worth double-checking module.nix's `keybind` value matches what you actually want, and that whatever's bound in Hyprland calls this correctly. Also: this module lists wtype as its typing-injection dependency, while atomic/srvc/ydotool.nix does the same job independently — pick one as the real path (see that module's notes) so dictation doesn't silently fail because the wrong tool is what's actually wired up in Hyprland.

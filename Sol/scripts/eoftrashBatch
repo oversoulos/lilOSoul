@@ -1,0 +1,93 @@
+#!/bin/bash
+# =============================================================================
+# eofTrashBatch - Move files from batch to Trash
+# =============================================================================
+# Usage: eofTrashBatch
+#
+# Clipboard format:
+#   |||START|||
+#   PATH|CONTENT|FLAG
+#   |||END|||
+#
+# Only the PATH is extracted from the first line after START.
+# =============================================================================
+
+echo "🗑️  Processing batch from clipboard (UNDO mode)..."
+
+# Create temp file from clipboard
+BATCH_FILE=$(mktemp)
+pbpaste > "$BATCH_FILE"
+
+if [ ! -s "$BATCH_FILE" ]; then
+    echo "❌ Clipboard is empty."
+    rm -f "$BATCH_FILE"
+    exit 1
+fi
+
+# Collect paths from the batch
+declare -a PATHS
+in_block=false
+block_processed=false
+
+while IFS= read -r line; do
+    if [[ "$line" == "|||START|||" ]]; then
+        in_block=true
+        block_processed=false
+        continue
+    fi
+    
+    if [[ "$line" == "|||END|||" ]]; then
+        in_block=false
+        continue
+    fi
+    
+    if [ "$in_block" = true ] && [ "$block_processed" = false ]; then
+        # This is the first line after START - extract path
+        path=$(echo "$line" | cut -d'|' -f1)
+        if [ -n "$path" ]; then
+            PATHS+=("$path")
+            block_processed=true
+        fi
+    fi
+done < "$BATCH_FILE"
+
+rm -f "$BATCH_FILE"
+
+if [ ${#PATHS[@]} -eq 0 ]; then
+    echo "❌ No valid files found in clipboard."
+    exit 1
+fi
+
+echo "📋 Found ${#PATHS[@]} file(s) to trash"
+echo ""
+for p in "${PATHS[@]}"; do
+    echo "  $p"
+done
+echo ""
+
+read -p "⚠️  Confirm moving these files to Trash? (y/N): " confirm
+
+if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+    echo "❌ Cancelled."
+    exit 1
+fi
+
+echo ""
+echo "🗑️  Moving files to Trash..."
+
+for p in "${PATHS[@]}"; do
+    if [ -f "$p" ]; then
+        timestamp=$(date +%Y%m%d_%H%M%S)
+        basename=$(basename "$p")
+        trash_path="$HOME/.Trash/${basename}_$timestamp"
+        mv "$p" "$trash_path"
+        echo "  🗑️  $p → $trash_path"
+    elif [ -d "$p" ]; then
+        echo "  ⚠️  $p is a directory (skipping)"
+    else
+        echo "  ⏭️  $p not found (skipping)"
+    fi
+done
+
+echo ""
+echo "✅ Undo complete!"

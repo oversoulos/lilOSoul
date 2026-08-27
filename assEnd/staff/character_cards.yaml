@@ -1,0 +1,66 @@
+# character-cards/graphic-designer.yaml
+id: "graphic-designer"
+name: "Graphic Designer"
+icon: "🎨"
+level: 12
+rank: "Senior"
+
+description: |
+  Creates visual concepts using design software.
+  Specializes in branding, print design, and digital assets.
+
+skills:
+  - name: "Vector Art"
+    level: 8
+    max: 10
+    description: "Creating scalable vector graphics"
+  - name: "Photo Editing"
+    level: 6
+    max: 10
+    description: "Retouching and manipulating photos"
+  - name: "Logo Design"
+    level: 9
+    max: 10
+    description: "Creating brand identities"
+
+tools:
+  - name: "GIMP"
+    mastery: "Mastered"
+    hours: 120
+    level: 10
+  - name: "Inkscape"
+    mastery: "Skilled"
+    hours: 80
+    level: 7
+  - name: "Krita"
+    mastery: "Learning"
+    hours: 47
+    level: 4
+
+quests:
+  completed: 24
+  total: 50
+  achievements:
+    - "Logo Master (24 logos created)"
+    - "Illustration Pro (12 illustrations)"
+    - "Animator (6 animations)"
+
+current_task:
+  name: "Design iOS App Icon"
+  started: "2026-01-15 10:00:00"
+  status: "In Progress"
+  timer: 16472  # seconds
+
+collaborators:
+  - name: "AI Assistant"
+    role: "Junior"
+    status: "Active"
+
+portfolio:
+  path: "~/Projects/BeastSlayer/assets/"
+  updates: "auto"
+
+resume:
+  last_updated: "2026-01-10"
+  format: "linkedin, pdf, markdown"
+  includes: ["skills", "hours", "projects", "tools"]

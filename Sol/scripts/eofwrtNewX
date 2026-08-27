@@ -1,0 +1,20 @@
+#!/bin/bash
+# Description: Creates a new script module straight from your copied clipboard text.
+
+TARGET_FILE="$1"
+
+if [ -z "$TARGET_FILE" ]; then
+    echo "❌ Error: Please specify a file path. Example: eofmkNew ~/Desktop/scripts/mycommand"
+    exit 1
+fi
+
+echo "📋 Processing... Grabbing your copied clipboard text."
+
+# Extract raw text straight out of your Mac clipboard buffer
+pbpaste > "$TARGET_FILE"
+
+# Automatically handle execution permissions and terminal environment reload
+chmod +x "$TARGET_FILE" 2>/dev/null
+source ~/.zshrc
+
+echo "🚀 Success! File written, unlocked via chmod, and system updated: $TARGET_FILE"

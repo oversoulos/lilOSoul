@@ -1,0 +1,1 @@
+any additional file types that woudl further modularisze, simplify, or help visually navigate and understand, or specific to the module type specifically 

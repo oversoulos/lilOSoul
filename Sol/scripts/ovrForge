@@ -1,0 +1,58 @@
+#!/bin/bash
+# Description: Dynamic 4-to-6 Quadrant Scaffolder for your NixOS repository trees.
+
+clear
+echo "==============================================================================="
+echo "🛠️  ovrOS UNIVERSAL BluePrint FORGE"
+echo "==============================================================================="
+printf "\n"
+
+# 1. Capture the structural root workspace
+read -p "📂 Enter target root directory path (e.g., ~/Documents/ovrOS-Prstn): " ROOT_DIR
+if [ -z "$ROOT_DIR" ]; then echo "❌ Path cannot be empty."; exit 1; fi
+
+# Expand tilde syntax dynamically
+ROOT_DIR="${ROOT_DIR/#\~/$HOME}"
+
+# 2. Capture the variable workspace categories
+echo "-------------------------------------------------------------------------------"
+echo "Type your quadrant/nexus categories separated by spaces."
+echo "Example for your full matrix: ovrSys ovrCLI ovrGUI ovrEnv ai-nexus container-nexus"
+echo "-------------------------------------------------------------------------------"
+read -p "👉 Categories: " -a CATEGORIES
+
+if [ ${#CATEGORIES[@]} -eq 0 ]; then
+    echo "❌ You must specify at least one category quadrant."
+    exit 1
+fi
+
+echo "-------------------------------------------------------------------------------"
+echo "🔨 Forging repository infrastructure at: $ROOT_DIR"
+mkdir -p "$ROOT_DIR/lilScrpts"
+mkdir -p "$ROOT_DIR/modz"
+
+# 3. Generate individual folders and empty placeholder configs dynamically
+for cat in "${CATEGORIES[@]}"; do
+    echo "  ✔ Creating space: modz/$cat"
+    mkdir -p "$ROOT_DIR/modz/$cat"
+    echo "{ imports = [ ]; }" > "$ROOT_DIR/modz/$cat/default.nix"
+done
+
+# 4. Forge the centralized Master Bridge configuration index
+echo "📝 Assembling centralized master index matrix controller..."
+MASTER_INDEX="$ROOT_DIR/modz/default.nix"
+echo "{ ... }:" > "$MASTER_INDEX"
+echo "{" >> "$MASTER_INDEX"
+echo "  imports = [" >> "$MASTER_INDEX"
+for cat in "${CATEGORIES[@]}"; do
+    echo "    ./$cat" >> "$MASTER_INDEX"
+done
+echo "  ];" >> "$MASTER_INDEX"
+echo "}" >> "$MASTER_INDEX"
+
+# Ensure execution flags are set for immediate utility
+chmod +x "$ROOT_DIR/lilScrpts"/* 2>/dev/null || true
+
+echo "==============================================================================="
+echo "✨ SUCCESS! Your custom matrix is deployed at: $ROOT_DIR"
+echo "==============================================================================="

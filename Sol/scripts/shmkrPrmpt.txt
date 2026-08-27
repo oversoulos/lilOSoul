@@ -1,0 +1,20 @@
+TASK: Generate a macOS zsh script based on the exact configuration details provided below. Do not assume or hallucinate default names, paths, or behaviors outside of these specifications.
+
+VARIABLES TO COLLECT FROM THE USER:
+1. COMMAND_NAME: (The unique filename and terminal keyword).
+2. SCRIPT_LOGIC: (The specific behavior or commands this script executes).
+
+OUTPUT TEMPLATE RULE:
+You must wrap your entire code response inside the following single copy-pasteable terminal execution block. Replace the placeholder capitalized values with the user's specific choices. Do not add conversational text before or after the code block.
+
+---START OF BLOCK---
+cat << 'EOF' > ~/Desktop/scripts/COMMAND_NAME
+#!/bin/bash
+# Script Name: COMMAND_NAME
+
+SCRIPT_LOGIC
+
+EOF
+chmod +x ~/Desktop/scripts/COMMAND_NAME
+echo "🚀 File written and permissions unlocked. Use command: COMMAND_NAME"
+---END OF BLOCK---

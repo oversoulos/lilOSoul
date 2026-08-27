@@ -1,0 +1,1 @@
+Directory of symlinks, mnt paths, and integrations toggling on and off, coupling decoupling

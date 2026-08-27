@@ -1,0 +1,114 @@
+#!/bin/bash
+# =============================================================================
+# eofwrtBatch - Batch write files from clipboard using START/END blocks
+# =============================================================================
+# Usage: eofwrtBatch
+#
+# Clipboard format:
+#   |||START|||
+#   PATH|CONTENT|FLAG
+#   |||END|||
+#
+# Example:
+#   |||START|||
+#   assEnd/atomic/cli/htop.nix|{ config, pkgs, lib, ... }: ...|
+#   |||END|||
+#   |||START|||
+#   assEnd/test.sh|#!/bin/bash\necho "Hello"|x
+#   |||END|||
+# =============================================================================
+
+echo "📋 Processing batch from clipboard (START/END mode)..."
+
+# Create temp file from clipboard
+BATCH_FILE=$(mktemp)
+pbpaste > "$BATCH_FILE"
+
+# Check if clipboard is empty
+if [ ! -s "$BATCH_FILE" ]; then
+    echo "❌ Clipboard is empty. Copy batch content first."
+    rm -f "$BATCH_FILE"
+    exit 1
+fi
+
+echo "📦 Processing batch..."
+echo ""
+
+# Process each START/END block
+in_block=false
+current_path=""
+current_content=""
+
+while IFS= read -r line; do
+    # Check for START marker
+    if [[ "$line" == "|||START|||" ]]; then
+        in_block=true
+        current_path=""
+        current_content=""
+        continue
+    fi
+    
+    # Check for END marker
+    if [[ "$line" == "|||END|||" ]]; then
+        in_block=false
+        
+        # Process the block if we have a path
+        if [ -n "$current_path" ]; then
+            # Extract path and content from first line (pipe separated)
+            # First line format: PATH|CONTENT
+            path_line=$(echo "$current_content" | head -1)
+            rest_content=$(echo "$current_content" | tail -n +2)
+            
+            # Parse first line for path and flag
+            path_part=$(echo "$path_line" | cut -d'|' -f1)
+            flag_part=$(echo "$path_line" | cut -d'|' -f3-)
+            
+            # Build full content = rest of lines
+            full_content="$rest_content"
+            
+            # Determine if executable
+            exec_flag=""
+            if [[ "$flag_part" == "x" ]] || [[ "$path_part" =~ \.(sh|bash|zsh|py|pl|rb)$ ]]; then
+                exec_flag="x"
+            fi
+            
+            # Create directory and write file
+            dir=$(dirname "$path_part")
+            mkdir -p "$dir"
+            echo "$full_content" > "$path_part"
+            
+            if [[ "$exec_flag" == "x" ]]; then
+                chmod +x "$path_part"
+                echo "  🔓 $path_part (executable)"
+            else
+                echo "  ✅ $path_part (regular file)"
+            fi
+        fi
+        
+        continue
+    fi
+    
+    # If we're in a block, collect lines
+    if [ "$in_block" = true ]; then
+        # First line of content contains PATH|CONTENT
+        if [ -z "$current_path" ]; then
+            current_path=$(echo "$line" | cut -d'|' -f1)
+        fi
+        current_content="$current_content$line"$'\n'
+    fi
+    
+done < "$BATCH_FILE"
+
+rm -f "$BATCH_FILE"
+
+# Reload terminal environment
+source ~/.zshrc 2>/dev/null
+
+echo ""
+echo "🚀 Batch complete!"
+echo ""
+echo "📋 Format reminder:"
+echo "   |||START|||"
+echo "   PATH|CONTENT|FLAG"
+echo "   |||END|||"
+echo "   FLAG = x for executable, empty for regular"

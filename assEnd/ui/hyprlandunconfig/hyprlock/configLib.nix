@@ -1,0 +1,1 @@
+complete/comprehensive configuration library for this module

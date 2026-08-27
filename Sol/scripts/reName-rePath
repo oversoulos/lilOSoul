@@ -1,0 +1,60 @@
+#!/bin/bash
+# Description: Renames a file/directory and updates ALL references across your project
+# Usage: rename <old_name> <new_name>
+
+OLD="$1"
+NEW="$2"
+
+if [[ -z "$OLD" ]] || [[ -z "$NEW" ]]; then
+    echo "❌ Error: Please specify old and new names."
+    echo "Usage: rename <old_name> <new_name>"
+    echo "Example: rename oldfile.txt newfile.txt"
+    exit 1
+fi
+
+echo "📝 Renaming: $OLD → $NEW"
+
+# Rename the file/directory
+if [[ -e "$OLD" ]]; then
+    mv -v "$OLD" "$NEW"
+else
+    echo "⚠️  Warning: '$OLD' not found"
+    exit 1
+fi
+
+# Get just the name (no path)
+OLD_NAME=$(basename "$OLD")
+NEW_NAME=$(basename "$NEW")
+
+echo "🔍 Updating references..."
+
+# macOS sed syntax
+SED_CMD="sed -i ''"
+
+find . -type f \
+    -not -path "./.git/*" \
+    -not -path "*/node_modules/*" \
+    -not -path "*/__pycache__/*" \
+    -not -name "*.png" -not -name "*.jpg" -not -name "*.gif" \
+    -not -name "*.mp4" -not -name "*.mp3" -not -name "*.wav" \
+    -not -name "*.pdf" -not -name "*.zip" -not -name "*.tar" \
+    -not -name "*.exe" -not -name "*.so" -not -name "*.dll" \
+    -not -name "*.pyc" -not -name "*.class" \
+    -exec grep -l "$OLD_NAME" {} \; 2>/dev/null | while read -r file; do
+    
+    file "$file" | grep -q "text" || continue
+    [[ "$file" == *".rename-backup"* ]] && continue
+    
+    echo "  ✓ Updating: $file"
+    
+    eval "$SED_CMD \"s|$OLD|$NEW|g\" \"$file\" 2>/dev/null"
+    eval "$SED_CMD \"s|$OLD_NAME|$NEW_NAME|g\" \"$file\" 2>/dev/null"
+    
+done
+
+echo "✅ Done!"
+echo ""
+echo "Next steps:"
+echo "  1. Check: git status"
+echo "  2. Review: git diff"
+echo "  3. If something broke, undo: git checkout -- ."

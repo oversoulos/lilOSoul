@@ -1,0 +1,17 @@
+#!/bin/bash
+# Description: Prints out a clean cheat-sheet menu of your custom commands.
+echo "=================================================="
+echo "🎯 MY PERSONAL TERMINAL CHEAT-SHEET"
+echo "=================================================="
+printf "%-20s | %s\n" "COMMAND" "DESCRIPTION"
+echo "--------------------------------------------------"
+for file in ~/Desktop/scripts/*; do
+    [ -f "$file" ] || continue
+    cmd=$(basename "$file")
+    # Grab the second line of the file (where we put the script description)
+    desc=$(sed -n '2p' "$file" | sed 's/# //g')
+    if [ -z "$desc" ] || [[ "$desc" != "Description:"* ]]; then desc="No description provided."; fi
+    desc=$(echo "$desc" | sed 's/Description: //g')
+    printf "%-20s | %s\n" "$cmd" "$desc"
+done
+echo "=================================================="

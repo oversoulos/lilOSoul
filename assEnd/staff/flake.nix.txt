@@ -1,0 +1,27 @@
+# flake.nix
+{
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  
+  outputs = { self, nixpkgs }:
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      devShells.${system}.default = pkgs.mkShell {
+        buildInputs = with pkgs; [
+          # These packages are pulled from /nix/store on demand
+          # They're available in this shell, nowhere else
+          python3
+          nodejs
+          git
+          vscode
+        ];
+        shellHook = ''
+          echo "🚀 Dev environment ready!"
+          echo "Packages available from /nix/store:"
+          echo "Python: $(which python3)"
+          echo "Node: $(which node)"
+        '';
+      };
+    };
+}
