@@ -9,7 +9,6 @@
       "hy3"                    # i3-like manual tiling
       "hyprspace"              # workspace overview (SUPER+Tab)
       "hyprsplit"              # awesome/dwm-like workspaces
-      "hyprgrass"              # touch gestures
       "hypr-dynamic-cursors"   # realistic cursor physics
       "imgborders"             # tiling image borders
       "hypr-darkwindow"        # invert colors on windows
@@ -241,7 +240,9 @@
     hl.bind({ "SUPER" }, "P", function() hl.dsp.pseudo() end)
     hl.bind({ "SUPER" }, "S", function() hl.dsp.togglesplit() end)
     hl.bind({ "SUPER" }, "T", function() hl.dsp.togglegroup() end)
-
+    hl.bind({ "SUPER" }, "question", function()
+   
+  
     -- Window movement
     hl.bind({ "SUPER" }, "h", function() hl.dsp.movefocus("l") end)
     hl.bind({ "SUPER" }, "l", function() hl.dsp.movefocus("r") end)
@@ -306,7 +307,10 @@
       hl.dsp.exec("grim ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png")
     end)
 
-   
+    hl.bind({ "SUPER" }, "question", function()
+      hl.dsp.exec("cat ~/.config/hypr/lua/keybinds.lua | wofi --dmenu")
+    end)
+    
     hl.bind({}, "F5", function()
       hl.dsp.exec("nerd-dictation begin --vosk-model-dir=~/.config/nerd-dictation/model")
     end)
