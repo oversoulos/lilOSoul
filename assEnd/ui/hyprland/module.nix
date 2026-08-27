@@ -5,9 +5,6 @@
     withUWSM = true;
     xwayland.enable = true;
 
-    # ============================================================
-    # 🔥 ALL PLUGINS ACTIVATED — EVERY SINGLE ONE
-    # ============================================================
     plugins = [
       "hy3"                    # i3-like manual tiling
       "hyprspace"              # workspace overview (SUPER+Tab)
@@ -22,7 +19,6 @@
     ];
   };
 
-  # ─── MASTER LUA CONFIGURATION — ABSOLUTELY MAXED ────────────
   xdg.configFile."hypr/hyprland.lua".text = ''
     -- ovrOS: MAXIMUM OVERDRIVE EDITION
     require("lua/monitors")
@@ -46,7 +42,7 @@
     hl.exec_once("[workspace special:notes silent] obsidian")
   '';
 
-  # ─── MONITORS: DUAL SCREEN MAX LAYOUT ────────────────────────
+ 
   xdg.configFile."hypr/lua/monitors.lua".text = ''
     hl.monitor("DP-1", "1920x1080@144", "0x0", 1)
     hl.monitor("HDMI-A-1", "1920x1080@60", "1920x0", 1)
@@ -68,7 +64,7 @@
     })
   '';
 
-  # ─── THEME: FULL BLOWN VISUAL ORGASM ─────────────────────────
+
   xdg.configFile."hypr/lua/theme.lua".text = ''
     hl.config({
       general = {
@@ -232,7 +228,6 @@
     })
   '';
 
-  # ─── KEYBINDS: EVERYTHING AND THE KITCHEN SINK ──────────────
   xdg.configFile."hypr/lua/keybinds.lua".text = ''
     -- SUPER layer
     hl.bind({ "SUPER" }, "Return", function() hl.dsp.exec("ghostty") end)
@@ -264,54 +259,54 @@
     hl.bind({ "SUPER CTRL" }, "k", function() hl.dsp.resizeactive("0 -20") end)
     hl.bind({ "SUPER CTRL" }, "j", function() hl.dsp.resizeactive("0 20") end)
 
-    -- Workspaces
+
     for i = 1, 9 do
       hl.bind({ "SUPER" }, tostring(i), function() hl.dsp.workspace(tostring(i)) end)
       hl.bind({ "SUPER SHIFT" }, tostring(i), function() hl.dsp.movetoworkspace(tostring(i)) end)
     end
 
-    -- Special workspaces
+    
     hl.bind({ "SUPER" }, "grave", function() hl.dsp.togglespecialworkspace("dropdown") end)
     hl.bind({ "SUPER" }, "D", function() hl.dsp.togglespecialworkspace("sysmon") end)
     hl.bind({ "SUPER" }, "M", function() hl.dsp.togglespecialworkspace("music") end)
     hl.bind({ "SUPER" }, "N", function() hl.dsp.togglespecialworkspace("notes") end)
 
-    -- OMNI-SEARCH (SUPER + Space)
+    
     hl.bind({ "SUPER" }, "Space", function()
       hl.dsp.exec("wofi --show drun --prompt '🚀 Search Apps, Notes & Files...' --location bottom --yoffset -20")
     end)
 
-    -- Clipboard Manager (SUPER + Y)
+
     hl.bind({ "SUPER" }, "Y", function()
       hl.dsp.exec("cliphist list | wofi --dmenu | cliphist decode | wl-copy")
     end)
 
-    -- Emoji Picker (SUPER + .)
+   
     hl.bind({ "SUPER" }, "period", function()
       hl.dsp.exec("bemoji -t")
     end)
 
-    -- Wallpaper Gallery (SUPER + W)
+    
     hl.bind({ "SUPER" }, "W", function()
       hl.dsp.exec("waypaper")
     end)
 
-    -- Screenshot (SUPER + Shift + S)
+   
     hl.bind({ "SUPER SHIFT" }, "S", function()
       hl.dsp.exec("grim -g \"$(slurp)\" - | wl-copy")
     end)
 
-    -- Screenshot with annotation (SUPER + Shift + A)
+   
     hl.bind({ "SUPER SHIFT" }, "A", function()
       hl.dsp.exec("grim -g \"$(slurp)\" - | swappy -f -")
     end)
 
-    -- Full screenshot (SUPER + Shift + F)
+   
     hl.bind({ "SUPER SHIFT" }, "F", function()
       hl.dsp.exec("grim ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png")
     end)
 
-    -- Voice Dictation (F5)
+   
     hl.bind({}, "F5", function()
       hl.dsp.exec("nerd-dictation begin --vosk-model-dir=~/.config/nerd-dictation/model")
     end)
@@ -319,7 +314,7 @@
       hl.dsp.exec("nerd-dictation end")
     end)
 
-    -- Media controls
+    
     hl.bind({}, "XF86AudioRaiseVolume", function() hl.dsp.exec("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+") end)
     hl.bind({}, "XF86AudioLowerVolume", function() hl.dsp.exec("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-") end)
     hl.bind({}, "XF86AudioMute", function() hl.dsp.exec("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle") end)
@@ -327,11 +322,11 @@
     hl.bind({}, "XF86AudioNext", function() hl.dsp.exec("playerctl next") end)
     hl.bind({}, "XF86AudioPrev", function() hl.dsp.exec("playerctl previous") end)
 
-    -- Brightness
+    
     hl.bind({}, "XF86MonBrightnessUp", function() hl.dsp.exec("brightnessctl s +5%") end)
     hl.bind({}, "XF86MonBrightnessDown", function() hl.dsp.exec("brightnessctl s 5%-") end)
 
-    -- Submap for quick resize
+    
     hl.bind({ "SUPER" }, "r", function()
       hl.dsp.submap("resize")
     end)
@@ -340,7 +335,7 @@
     end)
   '';
 
-  # ─── SCRATCHPADS: MAXIMUM OVERDRIVE ──────────────────────────
+  
   xdg.configFile."hypr/lua/drawers.lua".text = ''
     hl.windowrule({
       -- Dropdown terminal
@@ -349,25 +344,25 @@
       "size 85% 50%, class:^(ghostty-dropterm)$",
       "move 7.5% 4%, class:^(ghostty-dropterm)$",
 
-      -- System monitor
+      
       "float, class:^(ghostty-sysmon)$",
       "workspace special:sysmon silent, class:^(ghostty-sysmon)$",
       "size 80% 60%, class:^(ghostty-sysmon)$",
       "move 10% 20%, class:^(ghostty-sysmon)$",
 
-      -- Music player
+      
       "float, class:^(spotify)$",
       "workspace special:music silent, class:^(spotify)$",
       "size 70% 80%, class:^(spotify)$",
       "move 15% 10%, class:^(spotify)$",
 
-      -- Obsidian notes
+      
       "float, class:^(obsidian)$",
       "workspace special:notes silent, class:^(obsidian)$",
       "size 75% 85%, class:^(obsidian)$",
       "move 12.5% 7.5%, class:^(obsidian)$",
 
-      -- Floating rules for dialogs
+      
       "float, class:^(pavucontrol)$",
       "float, class:^(blueman-manager)$",
       "float, class:^(nm-connection-editor)$",
@@ -376,7 +371,7 @@
       "float, class:^(waypaper)$",
       "float, class:^(gnome-calculator)$",
 
-      -- Center all floating windows
+      
       "center, class:^(pavucontrol)$",
       "center, class:^(blueman-manager)$",
       "center, class:^(nm-connection-editor)$",
@@ -386,7 +381,7 @@
       "center, class:^(gnome-calculator)$",
     })
 
-    -- Window rules for specific apps
+    
     hl.windowrulev2({
       "opacity 1.0 override 0.9 override, class:^(foot)$",
       "opacity 1.0 override 0.9 override, class:^(ghostty)$",
